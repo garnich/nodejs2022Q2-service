@@ -1,4 +1,4 @@
-const DB = {
+export const DB = {
     users: [],
     tracks: [],
     artists: [],
