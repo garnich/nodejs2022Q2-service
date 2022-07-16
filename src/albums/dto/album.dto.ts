@@ -2,5 +2,5 @@ export class AlbumDto {
     readonly id: string;
     readonly name: string;
     readonly year: number;
-    readonly artistId: string | null; // refers to Artist
+    readonly artistId: string | null;
 }
