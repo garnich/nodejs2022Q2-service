@@ -1,50 +1,38 @@
-import { v4 as uuidv4 } from 'uuid';
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
-import { DB } from '../mockedDB/mocked';
+import { Body, Controller, Delete, Get, Param, Post, Put, ValidationPipe } from '@nestjs/common';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { TrackDto } from './dto/track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
 
+import { ITracks } from './tracks.interface'
+import { TracksService } from './tracks.service';
+
+
 @Controller('tracks')
 export class TracksController {
+    constructor(private readonly trackService: TracksService) {}
 
     @Get()
-    getAllTracks() {
-        return DB.tracks;
+    findAll(): ITracks[] {
+        return this.trackService.getTracks();
     }
 
     @Post()
-    createTrack(@Body() createTrackDto: CreateTrackDto): TrackDto{
-        const newTrack = {
-            id: uuidv4(),
-            name: createTrackDto.name,
-            artistId: createTrackDto.artistId,
-            albumId: createTrackDto.albumId,
-            duration: createTrackDto.duration
-        }
-
-        DB.tracks.push(newTrack);
-
-        return DB.tracks.find((track) => track.id === newTrack.id)
+    createTrack(@Body(new ValidationPipe()) CreateTrackDto: CreateTrackDto): ITracks {
+        return this.trackService.createTrack(CreateTrackDto);
     }
 
     @Put(':id')
-    updatetrack(@Body() updateTrackDto: UpdateTrackDto, @Param('id') id: string): TrackDto {
-        const idx = DB.tracks.findIndex(track => track.id === id)
-        
-        DB.tracks[idx] = {...DB.tracks[idx], ...updateTrackDto};
-  
-        return DB.tracks[idx] 
+    updateTrack(@Body(new ValidationPipe()) updateTrackDto: UpdateTrackDto, @Param('id') id: string): TrackDto {
+        return this.trackService.updateTrack(id, updateTrackDto); 
     }
 
     @Delete(':id')
-    deleteTrack(@Param('id') id: string): TrackDto[]{
+    deleteTrack(@Param('id') id: string){
+        return this.trackService.deleteTrack(id);
+    }
 
-        const idx = DB.tracks.findIndex(track => track.id === id)
-        const newTracksData = [...DB.tracks.slice(0, idx), ...DB.tracks.slice(idx + 1)]
-  
-        DB.tracks = newTracksData;
-  
-        return DB.tracks
+    @Get(':id')
+    findById(@Param('id') id: string): ITracks {
+        return this.trackService.getTrack(id);
     }
 }
