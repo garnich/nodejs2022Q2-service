@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Post, Put, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Header, HttpCode, HttpStatus, Param, Post, Put, ValidationPipe } from '@nestjs/common';
 import { UserDto } from './dto/user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 
@@ -12,18 +12,21 @@ export class UsersController {
     constructor(private readonly userService: UsersService) {}
 
     @Get()
+    @Header('Content-Type', 'application/json')
     @HttpCode(HttpStatus.OK)
     findAll(): IBaseUser[] {
         return this.userService.getUsers();
     }
 
     @Post()
+    @Header('Content-Type', 'application/json')
     @HttpCode(HttpStatus.CREATED)
     createUser(@Body(new ValidationPipe()) CreateUserDto: UserDto): IBaseUser {
         return this.userService.createUser(CreateUserDto);
     }
 
     @Put(':id')
+    @Header('Content-Type', 'application/json')
     @HttpCode(HttpStatus.OK)
     updateUserPass(@Body(new ValidationPipe()) updateUserDto: UpdateUserDto, @Param('id') id: string): IBaseUser {
         if(!IDValidator(id)) throw invalidIdExeption();
@@ -36,6 +39,7 @@ export class UsersController {
     }
 
     @Delete(':id')
+    @Header('Content-Type', 'application/json')
     @HttpCode(HttpStatus.NO_CONTENT)
     deleteUser(@Param('id') id: string){
         if(!IDValidator(id)) throw invalidIdExeption();
@@ -48,6 +52,7 @@ export class UsersController {
     }
 
     @Get(':id')
+    @Header('Content-Type', 'application/json')
     @HttpCode(HttpStatus.OK)
     findById(@Param('id') id: string): IBaseUser {
         if(!IDValidator(id)) throw invalidIdExeption();
