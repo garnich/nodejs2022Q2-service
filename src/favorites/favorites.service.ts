@@ -1,6 +1,5 @@
 import { Injectable } from "@nestjs/common";
 import { IFavorites } from "./favorites.interface";
-import { TracksService } from '../tracks/tracks.service';
 import { ITracks } from "src/tracks/tracks.interface";
 import { IAlbums } from "src/albums/albums.interface";
 import { IArtists } from "src/artists/artists.interface";
