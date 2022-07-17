@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsOptional, IsString, IsUUID } from "class-validator";
+import { IsNotEmpty, IsNumber, IsOptional, IsString, IsUUID } from "class-validator";
 
 export class UpdateAlbumDto {
     @IsNotEmpty()
@@ -6,7 +6,7 @@ export class UpdateAlbumDto {
     name: string;
 
     @IsNotEmpty()
-    @IsString()
+    @IsNumber()
     year: number;
 
     @IsOptional()

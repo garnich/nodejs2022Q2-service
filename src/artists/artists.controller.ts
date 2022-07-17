@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Header, HttpCode, HttpStatus, Param, Post, Put, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Header, HttpCode, HttpStatus, Param, ParseUUIDPipe, Post, Put, ValidationPipe } from '@nestjs/common';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { ArtistDto } from './dto/artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
@@ -10,7 +10,7 @@ import { TracksService } from 'src/tracks/tracks.service';
 import { AlbumsService } from 'src/albums/albums.service';
 
 
-@Controller('artists')
+@Controller('artist')
 export class ArtistsController {
     constructor(
         private readonly artistService: ArtistsService,
@@ -19,59 +19,69 @@ export class ArtistsController {
     ) {}
 
     @Get()
-    @Header('Content-Type', 'application/json')
+    @Header('Accept', 'application/json')
     @HttpCode(HttpStatus.OK)
     findAll(): IArtists[] {
         return this.artistService.getArtists();
     }
 
     @Post()
-    @Header('Content-Type', 'application/json')
+    @Header('Accept', 'application/json')
     @HttpCode(HttpStatus.CREATED)
     createArtist(@Body(new ValidationPipe()) CreateArtistDto: CreateArtistDto): IArtists {
         return this.artistService.createArtist(CreateArtistDto);
     }
 
     @Put(':id')
-    @Header('Content-Type', 'application/json')
+    @Header('Accept', 'application/json')
     @HttpCode(HttpStatus.OK)
-    updateArtist(@Body(new ValidationPipe()) updateArtistDto: UpdateArtistDto, @Param('id') id: string): ArtistDto {
-        if(!IDValidator(id)) throw invalidIdExeption();
-
-        const isArtistExist: boolean = !!this.artistService.getArtist(id);
-
-        if(!isArtistExist) throw itemNotExistExeption('artist');
-
-        return this.artistService.updateArtist(id, updateArtistDto); 
+    updateArtist(@Body(new ValidationPipe()) updateArtistDto: UpdateArtistDto, @Param('id', new ParseUUIDPipe({ version: '4' })) id: string): ArtistDto {
+        if(!IDValidator(id)) {
+            throw invalidIdExeption();
+        } else {
+            const isArtistExist: boolean = !!this.artistService.getArtist(id);
+            
+            if(!isArtistExist) {
+                throw itemNotExistExeption('artist');
+            } else {
+                return this.artistService.updateArtist(id, updateArtistDto); 
+            }
+        }
     }
 
     @Delete(':id')
-    @Header('Content-Type', 'application/json')
+    @Header('Accept', 'application/json')
     @HttpCode(HttpStatus.NO_CONTENT)
-    deleteArtist(@Param('id') id: string){
-        if(!IDValidator(id)) throw invalidIdExeption();
-
-        const isArtistExist: boolean = !!this.artistService.getArtist(id);
-
-        if(!isArtistExist) throw itemNotExistExeption('artist');
-
-        return this.artistService.deleteArtist(id);
+    deleteArtist(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string){
+        if(!IDValidator(id)) {
+            throw invalidIdExeption();
+        } else {
+            const isArtistExist: boolean = !!this.artistService.getArtist(id);
+            
+            if(!isArtistExist) {
+                throw itemNotExistExeption('artist');
+            } else {
+                this.artistService.deleteArtist(id);
+                this.trackService.removeNotExistingArtistId(id);
+                this.albumService.removeNotExistingArtistId(id);
+            }
+        }
     }
 
     @Get(':id')
-    @Header('Content-Type', 'application/json')
+    @Header('Accept', 'application/json')
     @HttpCode(HttpStatus.OK)
-    findById(@Param('id') id: string) {
-        if(!IDValidator(id)) throw invalidIdExeption();
-
-        const isArtistExist: boolean = !!this.artistService.getArtist(id);
-
-        if(!isArtistExist) {
-            throw itemNotExistExeption('artist');
+    findById(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
+        if(!IDValidator(id)) {
+            throw invalidIdExeption();
         } else {
-            this.artistService.getArtist(id);
-            this.trackService.removeNotExistingArtistId(id);
-            this.albumService.removeNotExistingArtistId(id);
+            const isArtistExist: boolean = !!this.artistService.getArtist(id);
+            
+            if(!isArtistExist) {
+                throw itemNotExistExeption('artist');
+            } else {
+                return this.artistService.getArtist(id);
+            }
         }
     }
 }

@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Header, HttpCode, HttpStatus, Param, Post, Put, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Header, HttpCode, HttpStatus, Param, ParseUUIDPipe, Post, Put, ValidationPipe } from '@nestjs/common';
 import { IFavorites } from "./favorites.interface";
 import { FavoritesService } from './favorites.service';
 import { IDValidator, invalidIdExeption, itemNotExistExeption } from 'src/helpers';
@@ -20,16 +20,16 @@ export class FavoritesController {
     ) {}
 
     @Get()
-    @Header('Content-Type', 'application/json')
+    @Header('Accept', 'application/json')
     @HttpCode(HttpStatus.OK)
     findAll(): IFavorites {
         return this.favoritesService.getAll();
     }
 
     @Post('track/:id')
-    @Header('Content-Type', 'application/json')
+    @Header('Accept', 'application/json')
     @HttpCode(HttpStatus.CREATED)
-    addTrackToFavorite(@Param('id') id: string): ITracks {
+    addTrackToFavorite(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string): ITracks {
         if(!IDValidator(id)) throw invalidIdExeption();
 
         const track: ITracks = this.trackService.getTrack(id);
@@ -40,9 +40,9 @@ export class FavoritesController {
     }
 
     @Post('artist/:id')
-    @Header('Content-Type', 'application/json')
+    @Header('Accept', 'application/json')
     @HttpCode(HttpStatus.CREATED)
-    addArtistToFavorite(@Param('id') id: string): IArtists {
+    addArtistToFavorite(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string): IArtists {
         if(!IDValidator(id)) throw invalidIdExeption();
 
         const artist: IArtists = this.artistService.getArtist(id);
@@ -53,9 +53,9 @@ export class FavoritesController {
     }
 
     @Post('album/:id')
-    @Header('Content-Type', 'application/json')
+    @Header('Accept', 'application/json')
     @HttpCode(HttpStatus.CREATED)
-    addAlbumToFavorite(@Param('id') id: string): IAlbums {
+    addAlbumToFavorite(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string): IAlbums {
         if(!IDValidator(id)) throw invalidIdExeption();
 
         const album: IAlbums = this.albumService.getAlbum(id);
@@ -66,9 +66,9 @@ export class FavoritesController {
     }
 
     @Delete('track/:id')
-    @Header('Content-Type', 'application/json')
+    @Header('Accept', 'application/json')
     @HttpCode(HttpStatus.NO_CONTENT)
-    deleteTrack(@Param('id') id: string){
+    deleteTrack(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string){
         if(!IDValidator(id)) throw invalidIdExeption();
 
         const isTrackExist: boolean = !!this.trackService.getTrack(id);
@@ -79,9 +79,9 @@ export class FavoritesController {
     }
 
     @Delete('artist/:id')
-    @Header('Content-Type', 'application/json')
+    @Header('Accept', 'application/json')
     @HttpCode(HttpStatus.NO_CONTENT)
-    deleteArtist(@Param('id') id: string){
+    deleteArtist(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string){
         if(!IDValidator(id)) throw invalidIdExeption();
 
         const isArtistExist: boolean = !!this.artistService.getArtist(id);
@@ -92,9 +92,9 @@ export class FavoritesController {
     }
 
     @Delete('album/:id')
-    @Header('Content-Type', 'application/json')
+    @Header('Accept', 'application/json')
     @HttpCode(HttpStatus.NO_CONTENT)
-    deleteAlbum(@Param('id') id: string){
+    deleteAlbum(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string){
         if(!IDValidator(id)) throw invalidIdExeption();
 
         const isAlbumtExist: boolean = !!this.albumService.getAlbum(id);

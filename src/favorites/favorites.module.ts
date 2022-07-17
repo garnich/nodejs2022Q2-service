@@ -1,12 +1,17 @@
-import { Module } from "@nestjs/common";
+import { Module, forwardRef } from "@nestjs/common";
 import { FavoritesController } from "./favorites.controller";
-import { AlbumsService } from "src/albums/albums.service";
-import { TracksService } from "src/tracks/tracks.service";
-import { ArtistsService } from "src/artists/artists.service";
 import { FavoritesService } from "./favorites.service";
+import { ArtistsModule } from "src/artists/artists.module";
+import { AlbumsModule } from "src/albums/albums.module";
+import { TracksModule } from "src/tracks/tracks.module";
 
 @Module({
-    providers: [FavoritesService, AlbumsService, TracksService, ArtistsService],
+    providers: [FavoritesService],
+    imports: [
+        forwardRef(() => TracksModule),
+        forwardRef(() => ArtistsModule),
+        forwardRef(() => AlbumsModule),
+      ],
     controllers: [FavoritesController],
 })
 
