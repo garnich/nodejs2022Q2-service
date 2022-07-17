@@ -26,6 +26,12 @@ import {
 import { TracksService } from 'src/tracks/tracks.service';
 import { AlbumsService } from 'src/albums/albums.service';
 import { FavoritesService } from 'src/favorites/favorites.service';
+import {
+  EXEPTION_ITEM,
+  EXEPTION_TYPE,
+  HEADERS,
+  UUID_VERSION,
+} from 'src/constants';
 
 @Controller('artist')
 export class ArtistsController {
@@ -37,14 +43,14 @@ export class ArtistsController {
   ) {}
 
   @Get()
-  @Header('Accept', 'application/json')
+  @Header(HEADERS.ACCEPT, HEADERS.APP_JSON)
   @HttpCode(HttpStatus.OK)
   findAll(): IArtists[] {
     return this.artistService.getArtists();
   }
 
   @Post()
-  @Header('Accept', 'application/json')
+  @Header(HEADERS.ACCEPT, HEADERS.APP_JSON)
   @HttpCode(HttpStatus.CREATED)
   createArtist(
     @Body(new ValidationPipe()) createArtistDto: CreateArtistDto,
@@ -53,11 +59,11 @@ export class ArtistsController {
   }
 
   @Put(':id')
-  @Header('Accept', 'application/json')
+  @Header(HEADERS.ACCEPT, HEADERS.APP_JSON)
   @HttpCode(HttpStatus.OK)
   updateArtist(
     @Body(new ValidationPipe()) updateArtistDto: UpdateArtistDto,
-    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
+    @Param('id', new ParseUUIDPipe({ version: UUID_VERSION })) id: string,
   ): ArtistDto {
     if (!IDValidator(id)) {
       throw invalidIdExeption();
@@ -65,7 +71,7 @@ export class ArtistsController {
       const isArtistExist = !!this.artistService.getArtist(id);
 
       if (!isArtistExist) {
-        throw itemNotExistExeption('artist');
+        throw itemNotExistExeption(EXEPTION_ITEM.ARTIST);
       } else {
         return this.artistService.updateArtist(id, updateArtistDto);
       }
@@ -73,19 +79,21 @@ export class ArtistsController {
   }
 
   @Delete(':id')
-  @Header('Accept', 'application/json')
+  @Header(HEADERS.ACCEPT, HEADERS.APP_JSON)
   @HttpCode(HttpStatus.NO_CONTENT)
-  deleteArtist(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
+  deleteArtist(
+    @Param('id', new ParseUUIDPipe({ version: UUID_VERSION })) id: string,
+  ) {
     if (!IDValidator(id)) {
       throw invalidIdExeption();
     } else {
       const isArtistExist = !!this.artistService.getArtist(id);
 
       if (!isArtistExist) {
-        throw itemNotExistExeption('artist');
+        throw itemNotExistExeption(EXEPTION_ITEM.ARTIST);
       } else {
         const isItemInFavorites: boolean =
-          this.favoritesService.isItemInFavorites(id, 'albums');
+          this.favoritesService.isItemInFavorites(id, EXEPTION_TYPE.ARTISTS);
 
         if (isItemInFavorites) {
           this.favoritesService.removeArtistFromFavorites(id);
@@ -100,16 +108,18 @@ export class ArtistsController {
   }
 
   @Get(':id')
-  @Header('Accept', 'application/json')
+  @Header(HEADERS.ACCEPT, HEADERS.APP_JSON)
   @HttpCode(HttpStatus.OK)
-  findById(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
+  findById(
+    @Param('id', new ParseUUIDPipe({ version: UUID_VERSION })) id: string,
+  ) {
     if (!IDValidator(id)) {
       throw invalidIdExeption();
     } else {
       const isArtistExist = !!this.artistService.getArtist(id);
 
       if (!isArtistExist) {
-        throw itemNotExistExeption('artist');
+        throw itemNotExistExeption(EXEPTION_ITEM.ARTIST);
       } else {
         return this.artistService.getArtist(id);
       }

@@ -4,6 +4,7 @@ import { UserDto } from './dto/user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { IBaseUser, IFullUser } from './user.interface';
 import { passwordsNotMatch } from 'src/helpers';
+import { USER_VESION } from 'src/constants';
 
 @Injectable()
 export class UsersService {
@@ -24,7 +25,7 @@ export class UsersService {
       id: uuidv4(),
       login: user.login,
       password: user.password,
-      version: 1,
+      version: USER_VESION,
       createdAt: dateNow,
       updatedAt: dateNow,
     };
@@ -64,7 +65,7 @@ export class UsersService {
       const newUserData = {
         password: newPassword,
         updatedAt: new Date().valueOf(),
-        version: UsersService.users[idx].version + 1,
+        version: UsersService.users[idx].version + USER_VESION,
       };
 
       UsersService.users[idx] = {

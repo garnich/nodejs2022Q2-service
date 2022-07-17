@@ -23,6 +23,12 @@ import { ArtistsService } from 'src/artists/artists.service';
 import { ITracks } from 'src/tracks/tracks.interface';
 import { IArtists } from 'src/artists/artists.interface';
 import { IAlbums } from 'src/albums/albums.interface';
+import {
+  EXEPTION_ITEM,
+  EXEPTION_TYPE,
+  HEADERS,
+  UUID_VERSION,
+} from 'src/constants';
 
 @Controller('favs')
 export class FavoritesController {
@@ -34,17 +40,17 @@ export class FavoritesController {
   ) {}
 
   @Get()
-  @Header('Accept', 'application/json')
+  @Header(HEADERS.ACCEPT, HEADERS.APP_JSON)
   @HttpCode(HttpStatus.OK)
   findAll(): IFavorites {
     return this.favoritesService.getAll();
   }
 
   @Post('track/:id')
-  @Header('Accept', 'application/json')
+  @Header(HEADERS.ACCEPT, HEADERS.APP_JSON)
   @HttpCode(HttpStatus.CREATED)
   addTrackToFavorite(
-    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
+    @Param('id', new ParseUUIDPipe({ version: UUID_VERSION })) id: string,
   ): ITracks {
     if (!IDValidator(id)) {
       throw invalidIdExeption();
@@ -52,7 +58,7 @@ export class FavoritesController {
       const track: ITracks = this.trackService.getTrack(id);
 
       if (!track) {
-        throw itemNotInFavoritesExeption('track');
+        throw itemNotInFavoritesExeption(EXEPTION_ITEM.TRACK);
       } else {
         return this.favoritesService.addTrackToFavorites(track);
       }
@@ -60,10 +66,10 @@ export class FavoritesController {
   }
 
   @Post('artist/:id')
-  @Header('Accept', 'application/json')
+  @Header(HEADERS.ACCEPT, HEADERS.APP_JSON)
   @HttpCode(HttpStatus.CREATED)
   addArtistToFavorite(
-    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
+    @Param('id', new ParseUUIDPipe({ version: UUID_VERSION })) id: string,
   ): IArtists {
     if (!IDValidator(id)) {
       throw invalidIdExeption();
@@ -71,7 +77,7 @@ export class FavoritesController {
       const artist: IArtists = this.artistService.getArtist(id);
 
       if (!artist) {
-        throw itemNotInFavoritesExeption('artist');
+        throw itemNotInFavoritesExeption(EXEPTION_ITEM.ARTIST);
       } else {
         return this.favoritesService.addArtistToFavorites(artist);
       }
@@ -79,10 +85,10 @@ export class FavoritesController {
   }
 
   @Post('album/:id')
-  @Header('Accept', 'application/json')
+  @Header(HEADERS.ACCEPT, HEADERS.APP_JSON)
   @HttpCode(HttpStatus.CREATED)
   addAlbumToFavorite(
-    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
+    @Param('id', new ParseUUIDPipe({ version: UUID_VERSION })) id: string,
   ): IAlbums {
     if (!IDValidator(id)) {
       throw invalidIdExeption();
@@ -90,7 +96,7 @@ export class FavoritesController {
       const album: IAlbums = this.albumService.getAlbum(id);
 
       if (!album) {
-        throw itemNotInFavoritesExeption('album');
+        throw itemNotInFavoritesExeption(EXEPTION_ITEM.ALBUM);
       } else {
         return this.favoritesService.addAlbumToFavorites(album);
       }
@@ -98,22 +104,24 @@ export class FavoritesController {
   }
 
   @Delete('track/:id')
-  @Header('Accept', 'application/json')
+  @Header(HEADERS.ACCEPT, HEADERS.APP_JSON)
   @HttpCode(HttpStatus.NO_CONTENT)
-  deleteTrack(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
+  deleteTrack(
+    @Param('id', new ParseUUIDPipe({ version: UUID_VERSION })) id: string,
+  ) {
     if (!IDValidator(id)) {
       throw invalidIdExeption();
     } else {
       const isTrackExist = !!this.trackService.getTrack(id);
 
       if (!isTrackExist) {
-        throw itemNotExistExeption('track');
+        throw itemNotExistExeption(EXEPTION_ITEM.TRACK);
       } else {
         const isItemInFavorites: boolean =
-          this.favoritesService.isItemInFavorites(id, 'tracks');
+          this.favoritesService.isItemInFavorites(id, EXEPTION_TYPE.TRACKS);
 
         if (!isItemInFavorites) {
-          throw itemNotInFavoritesExeption('track');
+          throw itemNotInFavoritesExeption(EXEPTION_ITEM.TRACK);
         } else {
           return this.favoritesService.removeTrackFromFavorites(id);
         }
@@ -122,22 +130,24 @@ export class FavoritesController {
   }
 
   @Delete('artist/:id')
-  @Header('Accept', 'application/json')
+  @Header(HEADERS.ACCEPT, HEADERS.APP_JSON)
   @HttpCode(HttpStatus.NO_CONTENT)
-  deleteArtist(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
+  deleteArtist(
+    @Param('id', new ParseUUIDPipe({ version: UUID_VERSION })) id: string,
+  ) {
     if (!IDValidator(id)) {
       throw invalidIdExeption();
     } else {
       const isArtistExist = !!this.artistService.getArtist(id);
 
       if (!isArtistExist) {
-        throw itemNotExistExeption('artist');
+        throw itemNotExistExeption(EXEPTION_ITEM.ARTIST);
       } else {
         const isItemInFavorites: boolean =
-          this.favoritesService.isItemInFavorites(id, 'artists');
+          this.favoritesService.isItemInFavorites(id, EXEPTION_TYPE.ARTISTS);
 
         if (!isItemInFavorites) {
-          throw itemNotInFavoritesExeption('artist');
+          throw itemNotInFavoritesExeption(EXEPTION_ITEM.ARTIST);
         } else {
           return this.favoritesService.removeArtistFromFavorites(id);
         }
@@ -146,22 +156,24 @@ export class FavoritesController {
   }
 
   @Delete('album/:id')
-  @Header('Accept', 'application/json')
+  @Header(HEADERS.ACCEPT, HEADERS.APP_JSON)
   @HttpCode(HttpStatus.NO_CONTENT)
-  deleteAlbum(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
+  deleteAlbum(
+    @Param('id', new ParseUUIDPipe({ version: UUID_VERSION })) id: string,
+  ) {
     if (!IDValidator(id)) {
       throw invalidIdExeption();
     } else {
       const isAlbumtExist = !!this.albumService.getAlbum(id);
 
       if (!isAlbumtExist) {
-        throw itemNotExistExeption('album');
+        throw itemNotExistExeption(EXEPTION_ITEM.ALBUM);
       } else {
         const isItemInFavorites: boolean =
-          this.favoritesService.isItemInFavorites(id, 'albums');
+          this.favoritesService.isItemInFavorites(id, EXEPTION_TYPE.ALBUMS);
 
         if (!isItemInFavorites) {
-          throw itemNotInFavoritesExeption('album');
+          throw itemNotInFavoritesExeption(EXEPTION_ITEM.ALBUM);
         } else {
           return this.favoritesService.removeAlbumFromFavorites(id);
         }

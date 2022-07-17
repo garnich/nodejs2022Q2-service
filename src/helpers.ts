@@ -1,8 +1,9 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { version as getUuidVersion, validate as isValidUuid } from 'uuid';
+import { UUID_VERSION } from './constants';
 
 export const IDValidator = (id: string): boolean => {
-  return getUuidVersion(id) === 4 && isValidUuid(id);
+  return getUuidVersion(id) === Number(UUID_VERSION) && isValidUuid(id);
 };
 
 export const invalidIdExeption = () =>

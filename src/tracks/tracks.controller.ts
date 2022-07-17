@@ -12,6 +12,12 @@ import {
   Put,
   ValidationPipe,
 } from '@nestjs/common';
+import {
+  EXEPTION_ITEM,
+  EXEPTION_TYPE,
+  HEADERS,
+  UUID_VERSION,
+} from 'src/constants';
 import { FavoritesService } from 'src/favorites/favorites.service';
 import {
   IDValidator,
@@ -33,14 +39,14 @@ export class TracksController {
   ) {}
 
   @Get()
-  @Header('Accept', 'application/json')
+  @Header(HEADERS.ACCEPT, HEADERS.APP_JSON)
   @HttpCode(HttpStatus.OK)
   findAll(): ITracks[] {
     return this.trackService.getTracks();
   }
 
   @Post()
-  @Header('Accept', 'application/json')
+  @Header(HEADERS.ACCEPT, HEADERS.APP_JSON)
   @HttpCode(HttpStatus.CREATED)
   createTrack(
     @Body(new ValidationPipe()) createTrackDto: CreateTrackDto,
@@ -49,11 +55,11 @@ export class TracksController {
   }
 
   @Put(':id')
-  @Header('Accept', 'application/json')
+  @Header(HEADERS.ACCEPT, HEADERS.APP_JSON)
   @HttpCode(HttpStatus.OK)
   updateTrack(
     @Body(new ValidationPipe()) updateTrackDto: UpdateTrackDto,
-    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
+    @Param('id', new ParseUUIDPipe({ version: UUID_VERSION })) id: string,
   ): TrackDto {
     if (!IDValidator(id)) {
       throw invalidIdExeption();
@@ -61,7 +67,7 @@ export class TracksController {
       const isTrackExist = !!this.trackService.getTrack(id);
 
       if (!isTrackExist) {
-        throw itemNotExistExeption('track');
+        throw itemNotExistExeption(EXEPTION_ITEM.TRACK);
       } else {
         return this.trackService.updateTrack(id, updateTrackDto);
       }
@@ -69,19 +75,21 @@ export class TracksController {
   }
 
   @Delete(':id')
-  @Header('Accept', 'application/json')
+  @Header(HEADERS.ACCEPT, HEADERS.APP_JSON)
   @HttpCode(HttpStatus.NO_CONTENT)
-  deleteTrack(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
+  deleteTrack(
+    @Param('id', new ParseUUIDPipe({ version: UUID_VERSION })) id: string,
+  ) {
     if (!IDValidator(id)) {
       throw invalidIdExeption();
     } else {
       const isTrackExist = !!this.trackService.getTrack(id);
 
       if (!isTrackExist) {
-        throw itemNotExistExeption('track');
+        throw itemNotExistExeption(EXEPTION_ITEM.TRACK);
       } else {
         const isItemInFavorites: boolean =
-          this.favoritesService.isItemInFavorites(id, 'tracks');
+          this.favoritesService.isItemInFavorites(id, EXEPTION_TYPE.TRACKS);
 
         if (isItemInFavorites) {
           this.favoritesService.removeTrackFromFavorites(id);
@@ -93,10 +101,10 @@ export class TracksController {
   }
 
   @Get(':id')
-  @Header('Accept', 'application/json')
+  @Header(HEADERS.ACCEPT, HEADERS.APP_JSON)
   @HttpCode(HttpStatus.OK)
   findById(
-    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
+    @Param('id', new ParseUUIDPipe({ version: UUID_VERSION })) id: string,
   ): ITracks {
     if (!IDValidator(id)) {
       throw invalidIdExeption();
@@ -104,7 +112,7 @@ export class TracksController {
       const isTrackExist = !!this.trackService.getTrack(id);
 
       if (!isTrackExist) {
-        throw itemNotExistExeption('track');
+        throw itemNotExistExeption(EXEPTION_ITEM.TRACK);
       } else {
         return this.trackService.getTrack(id);
       }
