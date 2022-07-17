@@ -56,4 +56,11 @@ export class AlbumsService {
       const idx = AlbumsService.albums.findIndex((album: IAlbums) => album.id === id);
       AlbumsService.albums = [...AlbumsService.albums.slice(0, idx), ...AlbumsService.albums.slice(idx + 1)];
     }
+
+    removeNotExistingArtistId(id: string) {
+      AlbumsService.albums = AlbumsService.albums.map((album: IAlbums) => ({
+        ...album,
+        artistId: album.artistId === id ? null: album.artistId
+      }))
+    }
 }

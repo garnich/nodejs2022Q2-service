@@ -6,11 +6,15 @@ import { UpdateAlbumDto } from './dto/update-album.dto';
 import { IAlbums } from './albums.interface'
 import { AlbumsService } from './albums.service';
 import { IDValidator, invalidIdExeption, itemNotExistExeption } from 'src/helpers';
+import { TracksService } from 'src/tracks/tracks.service';
 
 
 @Controller('albums')
 export class AlbumsController {
-    constructor(private readonly albumService: AlbumsService) {}
+    constructor(
+        private readonly albumService: AlbumsService,
+        private readonly trackService: TracksService
+    ) {}
 
     @Get()
     @Header('Content-Type', 'application/json')
@@ -47,7 +51,12 @@ export class AlbumsController {
 
         const isAlbumExist: boolean = !!this.albumService.getAlbum(id);
 
-        if(!isAlbumExist) throw itemNotExistExeption('album');
+        if(!isAlbumExist) {
+            throw itemNotExistExeption('album');
+        } else {
+            this.albumService.deleteAlbum(id);
+            this.trackService.removeNotExistingAlbumId(id);
+        }
 
         return this.albumService.deleteAlbum(id);
     }

@@ -6,11 +6,17 @@ import { UpdateArtistDto } from './dto/update-artist.dto';
 import { IArtists } from './artists.interface'
 import { ArtistsService } from './artists.service';
 import { IDValidator, invalidIdExeption, itemNotExistExeption } from 'src/helpers';
+import { TracksService } from 'src/tracks/tracks.service';
+import { AlbumsService } from 'src/albums/albums.service';
 
 
 @Controller('artists')
 export class ArtistsController {
-    constructor(private readonly artistService: ArtistsService) {}
+    constructor(
+        private readonly artistService: ArtistsService,
+        private readonly trackService: TracksService,
+        private readonly albumService: AlbumsService,
+    ) {}
 
     @Get()
     @Header('Content-Type', 'application/json')
@@ -55,13 +61,17 @@ export class ArtistsController {
     @Get(':id')
     @Header('Content-Type', 'application/json')
     @HttpCode(HttpStatus.OK)
-    findById(@Param('id') id: string): IArtists {
+    findById(@Param('id') id: string) {
         if(!IDValidator(id)) throw invalidIdExeption();
 
         const isArtistExist: boolean = !!this.artistService.getArtist(id);
 
-        if(!isArtistExist) throw itemNotExistExeption('artist');
-
-        return this.artistService.getArtist(id);
+        if(!isArtistExist) {
+            throw itemNotExistExeption('artist');
+        } else {
+            this.artistService.getArtist(id);
+            this.trackService.removeNotExistingArtistId(id);
+            this.albumService.removeNotExistingArtistId(id);
+        }
     }
 }
