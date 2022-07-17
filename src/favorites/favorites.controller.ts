@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Header, HttpCode, HttpStatus, Param, ParseUUIDPipe, Post, Put, ValidationPipe } from '@nestjs/common';
 import { IFavorites } from "./favorites.interface";
 import { FavoritesService } from './favorites.service';
-import { IDValidator, invalidIdExeption, itemNotExistExeption } from 'src/helpers';
+import { IDValidator, invalidIdExeption, itemNotExistExeption, itemNotInFavoritesExeption } from 'src/helpers';
 import { TracksService } from 'src/tracks/tracks.service';
 import { AlbumsService } from 'src/albums/albums.service';
 import { ArtistsService } from 'src/artists/artists.service';
@@ -36,7 +36,7 @@ export class FavoritesController {
             const track: ITracks = this.trackService.getTrack(id);
             
             if(!track) {
-                throw itemNotExistExeption('track');
+                throw itemNotInFavoritesExeption('track');
             } else {
                 return this.favoritesService.addTrackToFavorites(track);
             }
@@ -53,7 +53,7 @@ export class FavoritesController {
             const artist: IArtists = this.artistService.getArtist(id);
             
             if(!artist) {
-                throw itemNotExistExeption('artist');
+                throw itemNotInFavoritesExeption('artist');
             } else {
                 return this.favoritesService.addArtistToFavorites(artist);
             }
@@ -70,7 +70,7 @@ export class FavoritesController {
             const album: IAlbums = this.albumService.getAlbum(id);
             
             if(!album) {
-                throw itemNotExistExeption('album');
+                throw itemNotInFavoritesExeption('album');
             } else {
                 return this.favoritesService.addAlbumToFavorites(album);
             }
@@ -89,7 +89,13 @@ export class FavoritesController {
             if(!isTrackExist) {
                 throw itemNotExistExeption('track');
             } else {
-                return this.favoritesService.removeTrackFromFavorites(id);
+                const isItemInFavorites: boolean = this.favoritesService.isItemInFavorites(id, 'tracks');
+
+                if(!isItemInFavorites) {
+                    throw itemNotInFavoritesExeption('track');
+                } else {   
+                    return this.favoritesService.removeTrackFromFavorites(id);
+                }
             }
         }
     }
@@ -106,7 +112,13 @@ export class FavoritesController {
             if(!isArtistExist) {
                 throw itemNotExistExeption('artist');
             } else {
-                return this.favoritesService.removeArtistFromFavorites(id);
+                const isItemInFavorites: boolean = this.favoritesService.isItemInFavorites(id, 'artists');
+
+                if(!isItemInFavorites) {
+                    throw itemNotInFavoritesExeption('artist');
+                } else {  
+                    return this.favoritesService.removeArtistFromFavorites(id);
+                }
             }
         }
     }
@@ -123,7 +135,13 @@ export class FavoritesController {
             if(!isAlbumtExist) {
                 throw itemNotExistExeption('album');
             } else {
-                return this.favoritesService.removeAlbumFromFavorites(id);
+                const isItemInFavorites: boolean = this.favoritesService.isItemInFavorites(id, 'albums');
+
+                if(!isItemInFavorites) {
+                    throw itemNotInFavoritesExeption('album');
+                } else {  
+                    return this.favoritesService.removeAlbumFromFavorites(id);
+                } 
             }
         }
     }

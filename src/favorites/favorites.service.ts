@@ -28,7 +28,7 @@ export class FavoritesService {
       }
     
     removeTrackFromFavorites(id: string) {
-      return FavoritesService.favorites.tracks.filter((track) => track.id !== id)
+      FavoritesService.favorites.tracks = FavoritesService.favorites.tracks.filter((track) => track.id !== id)
     }
 
     addAlbumToFavorites(album: IAlbums) {
@@ -38,7 +38,12 @@ export class FavoritesService {
     }
   
     removeAlbumFromFavorites(id: string) {
-      return FavoritesService.favorites.albums.filter((album) => album.id !== id)
+      FavoritesService.favorites.albums = FavoritesService.favorites.albums.filter((album) => album.id !== id);
+
+      FavoritesService.favorites.tracks = FavoritesService.favorites.tracks.map((track) => ({
+        ...track,
+        albumId: track.albumId === id ? null: track.albumId
+      }));
     }
 
     addArtistToFavorites(artist: IArtists) {
@@ -48,6 +53,23 @@ export class FavoritesService {
     }
   
     removeArtistFromFavorites(id: string) {
-      return FavoritesService.favorites.artists.filter((artist) => artist.id !== id)
+      FavoritesService.favorites.artists = FavoritesService.favorites.artists.filter((artist) => artist.id !== id);
+
+      FavoritesService.favorites.tracks = FavoritesService.favorites.tracks.map((track) => ({
+        ...track,
+        artistId: track.artistId === id ? null: track.artistId
+      }));
+
+      FavoritesService.favorites.albums = FavoritesService.favorites.albums.map((album) => ({
+        ...album,
+        artistId: album.artistId === id ? null: album.artistId
+      }));
+    }
+
+    isItemInFavorites(id: string, type: string): boolean {
+      const ItemForSearch = FavoritesService.favorites[type] as Array<IAlbums | ITracks | IArtists>;
+      const item = ItemForSearch.find((item: IAlbums | ITracks | IArtists) => item.id === id)
+      
+      return !!item;
     }
 }

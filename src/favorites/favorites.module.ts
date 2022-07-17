@@ -13,6 +13,7 @@ import { TracksModule } from "src/tracks/tracks.module";
         forwardRef(() => AlbumsModule),
       ],
     controllers: [FavoritesController],
+    exports: [FavoritesService],
 })
 
 export class FavoritesModule {}

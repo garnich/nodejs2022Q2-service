@@ -8,6 +8,7 @@ import { ArtistsService } from './artists.service';
 import { IDValidator, invalidIdExeption, itemNotExistExeption } from 'src/helpers';
 import { TracksService } from 'src/tracks/tracks.service';
 import { AlbumsService } from 'src/albums/albums.service';
+import { FavoritesService } from 'src/favorites/favorites.service';
 
 
 @Controller('artist')
@@ -16,6 +17,7 @@ export class ArtistsController {
         private readonly artistService: ArtistsService,
         private readonly trackService: TracksService,
         private readonly albumService: AlbumsService,
+        private readonly favoritesService: FavoritesService,
     ) {}
 
     @Get()
@@ -61,6 +63,12 @@ export class ArtistsController {
             if(!isArtistExist) {
                 throw itemNotExistExeption('artist');
             } else {
+                const isItemInFavorites: boolean = this.favoritesService.isItemInFavorites(id, 'albums');
+                
+                if(isItemInFavorites) {
+                    this.favoritesService.removeArtistFromFavorites(id);
+                }
+
                 this.artistService.deleteArtist(id);
                 this.trackService.removeNotExistingArtistId(id);
                 this.albumService.removeNotExistingArtistId(id);

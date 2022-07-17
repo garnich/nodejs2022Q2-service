@@ -7,13 +7,15 @@ import { IAlbums } from './albums.interface'
 import { AlbumsService } from './albums.service';
 import { IDValidator, invalidIdExeption, itemNotExistExeption } from 'src/helpers';
 import { TracksService } from 'src/tracks/tracks.service';
+import { FavoritesService } from 'src/favorites/favorites.service';
 
 
 @Controller('album')
 export class AlbumsController {
     constructor(
         private readonly albumService: AlbumsService,
-        private readonly trackService: TracksService
+        private readonly trackService: TracksService,
+        private readonly favoritesService: FavoritesService
     ) {}
 
     @Get()
@@ -59,6 +61,12 @@ export class AlbumsController {
             if(!isAlbumExist) {
                 throw itemNotExistExeption('album');
             } else {
+                const isItemInFavorites: boolean = this.favoritesService.isItemInFavorites(id, 'albums');
+                
+                if(isItemInFavorites) {
+                    this.favoritesService.removeAlbumFromFavorites(id);
+                }
+                
                 this.albumService.deleteAlbum(id);
                 this.trackService.removeNotExistingAlbumId(id);
             }
@@ -73,7 +81,7 @@ export class AlbumsController {
             throw invalidIdExeption();
         } else {
             const album = this.albumService.getAlbum(id);
-            console.log('album', album)
+
             if(!album) {
                 throw itemNotExistExeption('album');
             } else {

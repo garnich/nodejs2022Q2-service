@@ -15,6 +15,11 @@ export const itemNotExistExeption = (item: string) => new HttpException(
     HttpStatus.NOT_FOUND,
 );
 
+export const itemNotInFavoritesExeption = (item: string) => new HttpException(
+    `Requested ${item} is not exist in favourites or not exist at all`,
+    HttpStatus.UNPROCESSABLE_ENTITY,
+);
+
 export const passwordsNotMatch = () => new HttpException(
     'Passwords not match, check OLD password',
     HttpStatus.FORBIDDEN,

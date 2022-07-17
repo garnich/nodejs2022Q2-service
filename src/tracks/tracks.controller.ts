@@ -1,4 +1,5 @@
 import { Body, Controller, Delete, Get, Header, HttpCode, HttpStatus, Param, ParseUUIDPipe, Post, Put, ValidationPipe } from '@nestjs/common';
+import { FavoritesService } from 'src/favorites/favorites.service';
 import { IDValidator, invalidIdExeption, itemNotExistExeption } from 'src/helpers';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { TrackDto } from './dto/track.dto';
@@ -10,7 +11,10 @@ import { TracksService } from './tracks.service';
 
 @Controller('track')
 export class TracksController {
-    constructor(private readonly trackService: TracksService) {}
+    constructor(
+        private readonly trackService: TracksService,
+        private readonly favoritesService: FavoritesService
+    ) {}
 
     @Get()
     @Header('Accept', 'application/json')
@@ -55,6 +59,12 @@ export class TracksController {
             if(!isTrackExist) {
                 throw itemNotExistExeption('track');
             } else {
+                const isItemInFavorites: boolean = this.favoritesService.isItemInFavorites(id, 'tracks');
+                
+                if(isItemInFavorites) {                    
+                    this.favoritesService.removeTrackFromFavorites(id);
+                }
+
                 return this.trackService.deleteTrack(id);
             }
         }
