@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { UserDto } from "./dto/user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { IBaseUser, IFullUser } from './user.interface';
+import { passwordsNotMatch } from "src/helpers";
 
 @Injectable()
 export class UsersService {
@@ -41,14 +42,17 @@ export class UsersService {
 
     getUser(id: string): IBaseUser {
         const user = UsersService.users.find((user: IFullUser) => user.id === id);
-        
-        return {
-          id: user.id,
-          login: user.login,
-          version: user.version,
-          createdAt: user.createdAt,
-          updatedAt: user.updatedAt,
-        };
+        if (user) {
+          return {
+            id: user.id,
+            login: user.login,
+            version: user.version,
+            createdAt: user.createdAt,
+            updatedAt: user.updatedAt,
+          };
+        } else {
+          return null;
+        }
     }
 
     updateUserPass(id: string, payload: UpdateUserDto): IBaseUser {
@@ -75,7 +79,9 @@ export class UsersService {
           createdAt: UsersService.users[idx].createdAt,
           updatedAt: UsersService.users[idx].updatedAt,
         };
-      }  
+      } else {
+        throw passwordsNotMatch();
+      }
     }
 
     deleteUser(id: string) {

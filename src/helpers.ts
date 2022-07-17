@@ -13,4 +13,9 @@ export const invalidIdExeption = () => new HttpException(
 export const itemNotExistExeption = (item: string) => new HttpException(
     `Requested ${item} is not exist`,
     HttpStatus.NOT_FOUND,
-  );
+);
+
+export const passwordsNotMatch = () => new HttpException(
+    'Passwords not match, check OLD password',
+    HttpStatus.FORBIDDEN,
+);

@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Get, Header, HttpCode, HttpStatus, Param, Par
 import { UserDto } from './dto/user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 
-import { IBaseUser } from './user.interface';
+import { IBaseUser, IFullUser } from './user.interface';
 import { UsersService } from './users.service';
 import { IDValidator, invalidIdExeption, itemNotExistExeption } from 'src/helpers';
 
@@ -66,12 +66,12 @@ export class UsersController {
         if(!IDValidator(id)) {
             throw invalidIdExeption();
         } else {
-            const isUserExist: boolean = !!this.userService.getUser(id);
+            const user: IBaseUser = this.userService.getUser(id);
 
-            if(!isUserExist) {
+            if(!user) {
                 throw itemNotExistExeption('user');
             } else {
-                return this.userService.getUser(id);
+                return user;
             }
         }
     }
