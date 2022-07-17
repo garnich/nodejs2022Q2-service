@@ -72,6 +72,7 @@ export class ArtistsController {
                 this.artistService.deleteArtist(id);
                 this.trackService.removeNotExistingArtistId(id);
                 this.albumService.removeNotExistingArtistId(id);
+                this.favoritesService.removeArtistFromFavorites(id);
             }
         }
     }
