@@ -8,7 +8,6 @@ import { UsersModule } from './users/user.module';
 import { FavoritesModule } from './favorites/favorites.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { UserEntity } from './entities/user.entitiy';
 
 @Module({
   imports: [

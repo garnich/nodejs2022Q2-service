@@ -6,7 +6,7 @@ import { IBaseUser, IFullUser } from './user.interface';
 import { itemNotExistExeption, passwordsNotMatch } from 'src/helpers';
 import { EXEPTION_ITEM, USER_VESION } from 'src/constants';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UserEntity } from 'src/entities/user.entitiy';
+import { UserEntity } from 'src/entities/user.entity';
 import { Repository } from 'typeorm';
 
 @Injectable()
