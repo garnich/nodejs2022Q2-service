@@ -1,16 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { IFavorites } from './favorites.interface';
 import { ITracks } from 'src/tracks/tracks.interface';
 import { IAlbums } from 'src/albums/albums.interface';
 import { IArtists } from 'src/artists/artists.interface';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ArrayContains, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { FavouriteEntity } from 'src/entities/favorite.entity';
 import { AlbumsService } from 'src/albums/albums.service';
 import { ArtistsService } from 'src/artists/artists.service';
 import { TracksService } from 'src/tracks/tracks.service';
 import { FavoritesDTO } from './dto/favorites.dto';
-import { AlbumEntity } from 'src/entities/album.entity';
 
 @Injectable()
 export class FavoritesService {

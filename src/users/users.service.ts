@@ -49,7 +49,7 @@ export class UsersService {
     }
   }
 
-  async updateUserPass(id: string, payload: UpdateUserDto): Promise<IBaseUser> {
+  async updateUserPass(id: string, payload: UpdateUserDto) {
     const { oldPassword, newPassword } = payload;
 
     const user = await this.usersRepository.findOneBy({id});
@@ -62,15 +62,18 @@ export class UsersService {
       throw passwordsNotMatch();
     }
 
-    const updatedUser = {
-      ...user,
+    const dateNow = new Date().valueOf();
+
+
+    const newPassData = {
       password: newPassword,
-      updatedAt: Date.now()
+      updatedAt: dateNow
     }
 
-    const savedUpdatedUser= await this.usersRepository.save(updatedUser);
+    Object.assign(user, newPassData);
+    await this.usersRepository.save(user);
 
-    return savedUpdatedUser.toResponse();
+    return (await this.usersRepository.findOneBy({id})).toResponse();
   }
 
   async deleteUser(id: string) {

@@ -16,7 +16,7 @@ export class FavouriteEntity {
     id: number;
 
     @OneToMany(() => AlbumEntity, (album) => album.favorites, RELATIONS_OPTIONS)
-      albums: AlbumEntity[];
+    albums: AlbumEntity[];
 
     @OneToMany(() => TrackEntity, (track) => track.favorites, RELATIONS_OPTIONS)
     tracks: TrackEntity[];

@@ -36,35 +36,35 @@ export class ArtistsController {
   @Get()
   @Header(HEADERS.ACCEPT, HEADERS.APP_JSON)
   @HttpCode(HttpStatus.OK)
-  findAll() {
-    return this.artistService.getArtists();
+  async findAll() {
+    return await this.artistService.getArtists();
   }
 
   @Post()
   @Header(HEADERS.ACCEPT, HEADERS.APP_JSON)
   @HttpCode(HttpStatus.CREATED)
-  createArtist(
+  async createArtist(
     @Body(new ValidationPipe()) createArtistDto: CreateArtistDto,
   ) {
-    return this.artistService.createArtist(createArtistDto);
+    return await this.artistService.createArtist(createArtistDto);
   }
 
   @Put(':id')
   @Header(HEADERS.ACCEPT, HEADERS.APP_JSON)
   @HttpCode(HttpStatus.OK)
-  updateArtist(
+  async updateArtist(
     @Body(new ValidationPipe()) updateArtistDto: UpdateArtistDto,
     @Param('id', new ParseUUIDPipe({ version: UUID_VERSION })) id: string,
   ) {
     if (!IDValidator(id)) {
       throw invalidIdExeption();
     } else {
-      const isArtistExist = !!this.artistService.getArtist(id);
+      const isArtistExist = await this.artistService.getArtist(id);
 
       if (!isArtistExist) {
         throw itemNotExistExeption(EXEPTION_ITEM.ARTIST);
       } else {
-        return this.artistService.updateArtist(id, updateArtistDto);
+        return await this.artistService.updateArtist(id, updateArtistDto);
       }
     }
   }
@@ -72,18 +72,18 @@ export class ArtistsController {
   @Delete(':id')
   @Header(HEADERS.ACCEPT, HEADERS.APP_JSON)
   @HttpCode(HttpStatus.NO_CONTENT)
-  deleteArtist(
+  async deleteArtist(
     @Param('id', new ParseUUIDPipe({ version: UUID_VERSION })) id: string,
   ) {
     if (!IDValidator(id)) {
       throw invalidIdExeption();
     } else {
-      const isArtistExist = !!this.artistService.getArtist(id);
+      const isArtistExist = await this.artistService.getArtist(id);
 
       if (!isArtistExist) {
         throw itemNotExistExeption(EXEPTION_ITEM.ARTIST);
       } else {
-        this.artistService.deleteArtist(id);
+        await this.artistService.deleteArtist(id);
       }
     }
   }
@@ -91,18 +91,18 @@ export class ArtistsController {
   @Get(':id')
   @Header(HEADERS.ACCEPT, HEADERS.APP_JSON)
   @HttpCode(HttpStatus.OK)
-  findById(
+  async findById(
     @Param('id', new ParseUUIDPipe({ version: UUID_VERSION })) id: string,
   ) {
     if (!IDValidator(id)) {
       throw invalidIdExeption();
     } else {
-      const isArtistExist = !!this.artistService.getArtist(id);
+      const isArtistExist = await this.artistService.getArtist(id);
 
       if (!isArtistExist) {
         throw itemNotExistExeption(EXEPTION_ITEM.ARTIST);
       } else {
-        return this.artistService.getArtist(id);
+        return await this.artistService.getArtist(id);
       }
     }
   }
