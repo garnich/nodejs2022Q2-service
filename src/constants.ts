@@ -20,11 +20,4 @@ const EXEPTION_ITEM = {
   USER: 'user',
 };
 
-const RELATIONS_OPTIONS: RelationOptions = {
-  nullable: true,
-  onDelete: 'SET NULL',
-  cascade: true,
-  eager: true,
-};
-
-export { UUID_VERSION, HEADERS, EXEPTION_TYPE, EXEPTION_ITEM, USER_VESION, RELATIONS_OPTIONS };
+export { UUID_VERSION, HEADERS, EXEPTION_TYPE, EXEPTION_ITEM, USER_VESION };

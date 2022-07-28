@@ -41,7 +41,7 @@ export class TracksController {
   @Get()
   @Header(HEADERS.ACCEPT, HEADERS.APP_JSON)
   @HttpCode(HttpStatus.OK)
-  findAll(): ITracks[] {
+  findAll() {
     return this.trackService.getTracks();
   }
 
@@ -50,7 +50,7 @@ export class TracksController {
   @HttpCode(HttpStatus.CREATED)
   createTrack(
     @Body(new ValidationPipe()) createTrackDto: CreateTrackDto,
-  ): ITracks {
+  ) {
     return this.trackService.createTrack(createTrackDto);
   }
 
@@ -60,7 +60,7 @@ export class TracksController {
   updateTrack(
     @Body(new ValidationPipe()) updateTrackDto: UpdateTrackDto,
     @Param('id', new ParseUUIDPipe({ version: UUID_VERSION })) id: string,
-  ): TrackDto {
+  ) {
     if (!IDValidator(id)) {
       throw invalidIdExeption();
     } else {
@@ -88,7 +88,7 @@ export class TracksController {
       if (!isTrackExist) {
         throw itemNotExistExeption(EXEPTION_ITEM.TRACK);
       } else {
-        const isItemInFavorites: boolean =
+        const isItemInFavorites =
           this.favoritesService.isItemInFavorites(id, EXEPTION_TYPE.TRACKS);
 
         if (isItemInFavorites) {
@@ -105,7 +105,7 @@ export class TracksController {
   @HttpCode(HttpStatus.OK)
   findById(
     @Param('id', new ParseUUIDPipe({ version: UUID_VERSION })) id: string,
-  ): ITracks {
+  ) {
     if (!IDValidator(id)) {
       throw invalidIdExeption();
     } else {

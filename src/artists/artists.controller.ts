@@ -13,22 +13,16 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { CreateArtistDto } from './dto/create-artist.dto';
-import { ArtistDto } from './dto/artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 
-import { IArtists } from './artists.interface';
 import { ArtistsService } from './artists.service';
 import {
   IDValidator,
   invalidIdExeption,
   itemNotExistExeption,
 } from 'src/helpers';
-import { TracksService } from 'src/tracks/tracks.service';
-import { AlbumsService } from 'src/albums/albums.service';
-import { FavoritesService } from 'src/favorites/favorites.service';
 import {
   EXEPTION_ITEM,
-  EXEPTION_TYPE,
   HEADERS,
   UUID_VERSION,
 } from 'src/constants';
@@ -37,15 +31,12 @@ import {
 export class ArtistsController {
   constructor(
     private readonly artistService: ArtistsService,
-    private readonly trackService: TracksService,
-    private readonly albumService: AlbumsService,
-    private readonly favoritesService: FavoritesService,
   ) {}
 
   @Get()
   @Header(HEADERS.ACCEPT, HEADERS.APP_JSON)
   @HttpCode(HttpStatus.OK)
-  findAll(): IArtists[] {
+  findAll() {
     return this.artistService.getArtists();
   }
 
@@ -54,7 +45,7 @@ export class ArtistsController {
   @HttpCode(HttpStatus.CREATED)
   createArtist(
     @Body(new ValidationPipe()) createArtistDto: CreateArtistDto,
-  ): IArtists {
+  ) {
     return this.artistService.createArtist(createArtistDto);
   }
 
@@ -64,7 +55,7 @@ export class ArtistsController {
   updateArtist(
     @Body(new ValidationPipe()) updateArtistDto: UpdateArtistDto,
     @Param('id', new ParseUUIDPipe({ version: UUID_VERSION })) id: string,
-  ): ArtistDto {
+  ) {
     if (!IDValidator(id)) {
       throw invalidIdExeption();
     } else {
@@ -92,17 +83,7 @@ export class ArtistsController {
       if (!isArtistExist) {
         throw itemNotExistExeption(EXEPTION_ITEM.ARTIST);
       } else {
-        const isItemInFavorites: boolean =
-          this.favoritesService.isItemInFavorites(id, EXEPTION_TYPE.ARTISTS);
-
-        if (isItemInFavorites) {
-          this.favoritesService.removeArtistFromFavorites(id);
-        }
-
         this.artistService.deleteArtist(id);
-        this.trackService.removeNotExistingArtistId(id);
-        this.albumService.removeNotExistingArtistId(id);
-        this.favoritesService.removeArtistFromFavorites(id);
       }
     }
   }

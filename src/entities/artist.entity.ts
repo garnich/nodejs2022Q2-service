@@ -1,5 +1,4 @@
 import { Exclude } from 'class-transformer';
-import { RELATIONS_OPTIONS } from 'src/constants';
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 import { FavouriteEntity } from './favorite.entity';
 
@@ -16,8 +15,8 @@ export class ArtistEntity {
 
   @Exclude()
   @ManyToOne(() => FavouriteEntity, (favorites) => favorites.albums, {
-    nullable: RELATIONS_OPTIONS.nullable,
-    onDelete: RELATIONS_OPTIONS.onDelete,
+    nullable: true,
+    onDelete: 'SET NULL',
   })
   favorites: FavouriteEntity;
 }

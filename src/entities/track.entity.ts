@@ -1,15 +1,22 @@
 import { Exclude } from 'class-transformer';
-import { RELATIONS_OPTIONS } from 'src/constants';
 import {
     Column,
     Entity,
     PrimaryGeneratedColumn,
     ManyToOne,
     JoinColumn,
+    RelationOptions,
 } from 'typeorm';
 import { AlbumEntity } from './album.entity';
 import { ArtistEntity } from './artist.entity';
 import { FavouriteEntity } from './favorite.entity';
+
+const RELATIONS_OPTIONS: RelationOptions = {
+    nullable: true,
+    onDelete: 'SET NULL',
+    cascade: true,
+    eager: true,
+  };
 
 @Entity('tracks')
 export class TrackEntity {

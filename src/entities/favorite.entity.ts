@@ -1,8 +1,14 @@
-import { RELATIONS_OPTIONS } from "src/constants";
-import { Entity, OneToMany, PrimaryColumn } from "typeorm";
+import { Entity, OneToMany, PrimaryColumn, RelationOptions } from "typeorm";
 import { AlbumEntity } from "./album.entity";
 import { ArtistEntity } from "./artist.entity";
 import { TrackEntity } from "./track.entity";
+
+const RELATIONS_OPTIONS: RelationOptions = {
+  nullable: true,
+  onDelete: 'SET NULL',
+  cascade: true,
+  eager: true,
+};
 
 @Entity('favourites')
 export class FavouriteEntity {

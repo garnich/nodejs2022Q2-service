@@ -44,7 +44,7 @@ export class AlbumsController {
   @Get()
   @Header(HEADERS.ACCEPT, HEADERS.APP_JSON)
   @HttpCode(HttpStatus.OK)
-  findAll(): IAlbums[] {
+  findAll(){
     return this.albumService.getAlbums();
   }
 
@@ -53,7 +53,7 @@ export class AlbumsController {
   @HttpCode(HttpStatus.CREATED)
   createAlbum(
     @Body(new ValidationPipe()) createAlbumDto: CreateAlbumDto,
-  ): IAlbums {
+  ) {
     return this.albumService.createAlbum(createAlbumDto);
   }
 
@@ -63,7 +63,7 @@ export class AlbumsController {
   updateAlbum(
     @Body(new ValidationPipe()) updateAlbumDto: UpdateAlbumDto,
     @Param('id', new ParseUUIDPipe({ version: UUID_VERSION })) id: string,
-  ): AlbumDto {
+  ) {
     if (!IDValidator(id)) {
       throw invalidIdExeption();
     } else {
@@ -91,7 +91,7 @@ export class AlbumsController {
       if (!isAlbumExist) {
         throw itemNotExistExeption(EXEPTION_ITEM.ALBUM);
       } else {
-        const isItemInFavorites: boolean =
+        const isItemInFavorites =
           this.favoritesService.isItemInFavorites(id, EXEPTION_TYPE.ALBUMS);
 
         if (isItemInFavorites) {
@@ -99,7 +99,6 @@ export class AlbumsController {
         }
 
         this.albumService.deleteAlbum(id);
-        this.trackService.removeNotExistingAlbumId(id);
       }
     }
   }
@@ -109,7 +108,7 @@ export class AlbumsController {
   @HttpCode(HttpStatus.OK)
   findById(
     @Param('id', new ParseUUIDPipe({ version: UUID_VERSION })) id: string,
-  ): IAlbums {
+  ) {
     if (!IDValidator(id)) {
       throw invalidIdExeption();
     } else {

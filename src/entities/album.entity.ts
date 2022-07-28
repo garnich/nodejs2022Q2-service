@@ -3,11 +3,18 @@ import {
   Entity,
   ManyToOne,
   PrimaryGeneratedColumn,
+  RelationOptions,
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import { ArtistEntity } from './artist.entity';
 import { FavouriteEntity } from './favorite.entity';
-import { RELATIONS_OPTIONS } from 'src/constants';
+
+const RELATIONS_OPTIONS: RelationOptions = {
+  nullable: true,
+  onDelete: 'SET NULL',
+  cascade: true,
+  eager: true,
+};
 
 @Entity('album')
 export class AlbumEntity {
@@ -29,8 +36,8 @@ export class AlbumEntity {
 
   @Exclude()
   @ManyToOne(() => FavouriteEntity, (favorites) => favorites.albums, {
-    nullable: RELATIONS_OPTIONS.nullable,
-    onDelete: RELATIONS_OPTIONS.onDelete,
+    nullable: true,
+    onDelete: 'SET NULL',
   })
   favorites: FavouriteEntity;
 }
