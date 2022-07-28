@@ -21,8 +21,8 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "scan:app": "docker scan --accept-license nodejs2022q2-service_server",
     "scan:db": "docker scan --accept-license nodejs2022q2-service_postgres",
-    "typeorm:generate": "typeorm-ts-node-esm migration:generate src/migration/migration -d src/migrationconfig.ts",
-    "typeorm:migration": "typeorm-ts-node-esm migration:run -d src/migrationconfig.ts"
+    "typeorm:generate": "typeorm-ts-node-commonjs migration:generate src/migration/migration -d src/migrationconfig.ts",
+    "typeorm:migration": "typeorm-ts-node-commonjs migration:run -d src/migrationconfig.ts"
   },
   "dependencies": {
     "@nestjs/common": "^8.0.0",

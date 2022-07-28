@@ -2,12 +2,12 @@ import {
   Column,
   Entity,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
-import { TrackEntity } from './track.entity';
 import { ArtistEntity } from './artist.entity';
+import { FavouriteEntity } from './favorite.entity';
+import { RELATIONS_OPTIONS } from 'src/constants';
 
 @Entity('album')
 export class AlbumEntity {
@@ -24,13 +24,13 @@ export class AlbumEntity {
   artistId: string | null;
 
   @Exclude()
-  @ManyToOne(() => ArtistEntity, (artist) => artist.albums, {
-    nullable: true,
-    onDelete: 'SET NULL',
-  })
+  @ManyToOne(() => ArtistEntity, RELATIONS_OPTIONS)
   artist: ArtistEntity;
 
   @Exclude()
-  @OneToMany(() => TrackEntity, (track) => track.albumId, { cascade: true })
-  tracks: TrackEntity[];
+  @ManyToOne(() => FavouriteEntity, (favorites) => favorites.albums, {
+    nullable: RELATIONS_OPTIONS.nullable,
+    onDelete: RELATIONS_OPTIONS.onDelete,
+  })
+  favorites: FavouriteEntity;
 }

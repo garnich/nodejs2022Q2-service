@@ -1,7 +1,7 @@
 import { Exclude } from 'class-transformer';
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
-import { AlbumEntity } from './album.entity';
-import { TrackEntity } from './track.entity';
+import { RELATIONS_OPTIONS } from 'src/constants';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
+import { FavouriteEntity } from './favorite.entity';
 
 @Entity('artists')
 export class ArtistEntity {
@@ -15,10 +15,9 @@ export class ArtistEntity {
   grammy: boolean;
 
   @Exclude()
-  @OneToMany(() => AlbumEntity, (album) => album.artist, { cascade: true })
-  albums: AlbumEntity[];
-
-  @Exclude()
-  @OneToMany(() => TrackEntity, (track) => track.artistId, { cascade: true })
-  tracks: TrackEntity[];
+  @ManyToOne(() => FavouriteEntity, (favorites) => favorites.albums, {
+    nullable: RELATIONS_OPTIONS.nullable,
+    onDelete: RELATIONS_OPTIONS.onDelete,
+  })
+  favorites: FavouriteEntity;
 }
