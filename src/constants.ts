@@ -1,3 +1,5 @@
+import { RelationOptions } from "typeorm";
+
 const UUID_VERSION = '4';
 const USER_VESION = 1;
 

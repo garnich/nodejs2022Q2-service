@@ -41,35 +41,35 @@ export class TracksController {
   @Get()
   @Header(HEADERS.ACCEPT, HEADERS.APP_JSON)
   @HttpCode(HttpStatus.OK)
-  findAll(): ITracks[] {
-    return this.trackService.getTracks();
+  async findAll() {
+    return await this.trackService.getTracks();
   }
 
   @Post()
   @Header(HEADERS.ACCEPT, HEADERS.APP_JSON)
   @HttpCode(HttpStatus.CREATED)
-  createTrack(
+  async createTrack(
     @Body(new ValidationPipe()) createTrackDto: CreateTrackDto,
-  ): ITracks {
-    return this.trackService.createTrack(createTrackDto);
+  ) {
+    return await this.trackService.createTrack(createTrackDto);
   }
 
   @Put(':id')
   @Header(HEADERS.ACCEPT, HEADERS.APP_JSON)
   @HttpCode(HttpStatus.OK)
-  updateTrack(
+  async updateTrack(
     @Body(new ValidationPipe()) updateTrackDto: UpdateTrackDto,
     @Param('id', new ParseUUIDPipe({ version: UUID_VERSION })) id: string,
-  ): TrackDto {
+  ) {
     if (!IDValidator(id)) {
       throw invalidIdExeption();
     } else {
-      const isTrackExist = !!this.trackService.getTrack(id);
+      const isTrackExist = await this.trackService.getTrack(id);
 
       if (!isTrackExist) {
         throw itemNotExistExeption(EXEPTION_ITEM.TRACK);
       } else {
-        return this.trackService.updateTrack(id, updateTrackDto);
+        return await this.trackService.updateTrack(id, updateTrackDto);
       }
     }
   }
@@ -77,25 +77,25 @@ export class TracksController {
   @Delete(':id')
   @Header(HEADERS.ACCEPT, HEADERS.APP_JSON)
   @HttpCode(HttpStatus.NO_CONTENT)
-  deleteTrack(
+  async deleteTrack(
     @Param('id', new ParseUUIDPipe({ version: UUID_VERSION })) id: string,
   ) {
     if (!IDValidator(id)) {
       throw invalidIdExeption();
     } else {
-      const isTrackExist = !!this.trackService.getTrack(id);
+      const isTrackExist = await this.trackService.getTrack(id);
 
       if (!isTrackExist) {
         throw itemNotExistExeption(EXEPTION_ITEM.TRACK);
       } else {
-        const isItemInFavorites: boolean =
+        const isItemInFavorites =
           this.favoritesService.isItemInFavorites(id, EXEPTION_TYPE.TRACKS);
 
         if (isItemInFavorites) {
           this.favoritesService.removeTrackFromFavorites(id);
         }
 
-        return this.trackService.deleteTrack(id);
+        await this.trackService.deleteTrack(id);
       }
     }
   }
@@ -103,18 +103,18 @@ export class TracksController {
   @Get(':id')
   @Header(HEADERS.ACCEPT, HEADERS.APP_JSON)
   @HttpCode(HttpStatus.OK)
-  findById(
+  async findById(
     @Param('id', new ParseUUIDPipe({ version: UUID_VERSION })) id: string,
-  ): ITracks {
+  ) {
     if (!IDValidator(id)) {
       throw invalidIdExeption();
     } else {
-      const isTrackExist = !!this.trackService.getTrack(id);
+      const isTrackExist = await this.trackService.getTrack(id);
 
       if (!isTrackExist) {
         throw itemNotExistExeption(EXEPTION_ITEM.TRACK);
       } else {
-        return this.trackService.getTrack(id);
+        return await this.trackService.getTrack(id);
       }
     }
   }
